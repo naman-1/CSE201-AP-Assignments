@@ -86,12 +86,6 @@ public class menu {
         switch(choice)
         {
             case 1:
-                System.out.println(Category.getAllCategories().size());
-                for (Category category : Category.getAllCategories()){
-                    System.out.println(category.getCategoryName());
-                    System.out.println(category.getCategoryID());
-
-                }
                 System.out.println("Enter category name");
                 String categoryName = sc.nextLine();
                 System.out.println("Enter category ID (in integer) ");
@@ -296,8 +290,8 @@ public class menu {
                     System.out.println("No coupons");
                 }
                 else {
+                    System.out.println("There are " + customer.getCoupons().size() + " coupons, worth");
                     for (Integer coupon : customer.getCoupons()) {
-                        System.out.println("There are " + customer.getCoupons().size() + " coupons, worth");
                         System.out.print(coupon + " %, ");
                     }
                     System.out.println("");
@@ -335,7 +329,7 @@ public class menu {
                 break;
             case 11:
                 System.out.println("Enter amount to add (in integer) ");
-                int amount = sc.nextInt();
+                Float amount = sc.nextFloat();
                 customer.setWalletBalance(amount);
                 break;
             case 12:

@@ -12,12 +12,12 @@ public class Normal extends Customer implements CustomerAtt {
         switch (customerNewStatus) {
             case "Prime":
                 Prime prime = new Prime(this.getName(), this.getAge(), this.getPhoneNumber(), this.getEmailID(), this.getPassword());
-                prime.setWalletBalance(-200);
+                prime.setWalletBalance(this.getWalletBalance()-200);
                 Normal.normalCustomers.remove(this);
                 return prime;
             case "Elite":
                 Elite elite = new Elite(this.getName(), this.getAge(), this.getPhoneNumber(), this.getEmailID(), this.getPassword());
-                elite.setWalletBalance(-300);
+                elite.setWalletBalance(this.getWalletBalance()-300);
                 Normal.normalCustomers.remove(this);
                 return elite;
             default:
@@ -30,7 +30,7 @@ public class Normal extends Customer implements CustomerAtt {
         return null;
     }
 
-    public int generateBill() {
+    public float generateBill() {
         if (this.checkCartAvailability() == 0){
             throw new RuntimeException("Products in cart are not available");
         }
@@ -44,11 +44,17 @@ public class Normal extends Customer implements CustomerAtt {
         System.out.println("\nCart has following products: ");
         for (Product product : this.getCart().getProducts()) {
             int maxDiscountForProd = 0;
-            if (product.getDiscount(this) > maxDiscountForProd){
-                maxDiscountForProd = product.getDiscount(this);
+            try{
+                if (product.getDiscount(this) > maxDiscountForProd){
+                    maxDiscountForProd = product.getDiscount(this);
+                }
+            } catch (Exception e) {
             }
-            if (this.getCategoryDiscount() > maxDiscountForProd){
-                maxDiscountForProd = this.getCategoryDiscount();
+            try{
+                if (this.getCategoryDiscount() > maxDiscountForProd){
+                    maxDiscountForProd = this.getCategoryDiscount();
+                }
+            } catch (Exception e) {
             }
             int prodPrice = product.getPrice() - (product.getPrice() * (maxDiscountForProd / 100));
             int quantity = this.getCart().getProductQuantity(product);
@@ -64,7 +70,7 @@ public class Normal extends Customer implements CustomerAtt {
         return totalBill;
     }
     
-    public void makePayment(int amount) {
+    public void makePayment(Float amount) {
         if (this.getWalletBalance() < amount){
             throw new RuntimeException("Insufficient balance");
         }

@@ -16,11 +16,12 @@ public class Prime extends Customer implements CustomerAtt {
         switch (customerNewStatus) {
             case "Normal":
                 Customer customer = new Normal(this.getName(), this.getAge(), this.getPhoneNumber(), this.getEmailID(), this.getPassword());
+                customer.setWalletBalance(getWalletBalance());
                 Prime.primeCustomers.remove(this);
                 return customer;
             case "Elite":
                 customer = new Elite(this.getName(), this.getAge(), this.getPhoneNumber(), this.getEmailID(), this.getPassword());
-                customer.setWalletBalance(-100);
+                customer.setWalletBalance(customer.getWalletBalance()-100);
                 Prime.primeCustomers.remove(this);
                 return customer;
             default:
@@ -37,7 +38,7 @@ public class Prime extends Customer implements CustomerAtt {
         this.coupons.remove(coupon);
     }
 
-    public int generateBill() {
+    public float generateBill() {
         if (this.checkCartAvailability() == 0){
             throw new RuntimeException("Products in cart are not available");
         }
@@ -52,15 +53,27 @@ public class Prime extends Customer implements CustomerAtt {
         System.out.println("\nCart has following products: ");
         for (Product product : this.getCart().getProducts()) {
             int maxDiscountForProd = 0;
-            if (product.getDiscount(this) > maxDiscountForProd){
-                maxDiscountForProd = product.getDiscount(this);
+            try{
+                if (product.getDiscount(this) > maxDiscountForProd){
+                    maxDiscountForProd = product.getDiscount(this);
+                }
             }
-            if (this.getCategoryDiscount() > maxDiscountForProd){
-                maxDiscountForProd = this.getCategoryDiscount();
+            catch (Exception e){
             }
-            if(Collections.max(this.getCoupons()) > maxDiscountForProd){
-                maxDiscountForProd = Collections.max(this.getCoupons());
-                flag = 1;
+            try{
+                if (this.getCategoryDiscount() > maxDiscountForProd){
+                    maxDiscountForProd = this.getCategoryDiscount();
+                }
+            }
+            catch (Exception e){
+            }
+            try{
+                if(Collections.max(this.getCoupons()) > maxDiscountForProd){
+                    maxDiscountForProd = Collections.max(this.getCoupons());
+                    flag = 1;
+                }
+            }
+            catch (Exception e){
             }
             int prodPrice = product.getPrice() - (product.getPrice() * (maxDiscountForProd / 100));
             int quantity = this.getCart().getProductQuantity(product);
@@ -79,7 +92,7 @@ public class Prime extends Customer implements CustomerAtt {
         return totalBill;
     }
 
-    public void makePayment(int amount) {
+    public void makePayment(Float amount) {
         if (amount>this.getWalletBalance()){
             throw new RuntimeException("Insufficient balance");
         }

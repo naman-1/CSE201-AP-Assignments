@@ -15,10 +15,12 @@ public class Elite extends Customer implements CustomerAtt {
         switch (customerNewStatus) {
             case "Normal":
                 Customer customer = new Normal(this.getName(), this.getAge(), this.getPhoneNumber(), this.getEmailID(), this.getPassword());
+                customer.setWalletBalance(getWalletBalance());
                 Elite.eliteCustomers.remove(this);
                 return customer; 
             case "Prime":
                 customer = new Prime(this.getName(), this.getAge(), this.getPhoneNumber(), this.getEmailID(), this.getPassword());
+                customer.setWalletBalance(getWalletBalance());
                 Elite.eliteCustomers.remove(this);
                 return customer;
             default:
@@ -31,14 +33,14 @@ public class Elite extends Customer implements CustomerAtt {
         return this.coupons;
     }
     void removeCoupon(int coupon) {
-        this.coupons.remove(coupon);
+        this.coupons.remove(this.coupons.indexOf(coupon));
     }
     
-    public int generateBill() {
+    public float generateBill() {
         if (this.checkCartAvailability() == 0){
             throw new RuntimeException("Products in cart are not available");
         }
-        int totalBill = 0;
+        float totalBill = 0;
         int flag = 0;
         System.out.println("Cart has following deals: ");
         for (Deals deal : this.getCart().getDeals()) {
@@ -49,18 +51,32 @@ public class Elite extends Customer implements CustomerAtt {
         System.out.println("\nCart has following products: ");
         for (Product product : this.getCart().getProducts()) {
             int maxDiscountForProd = 0;
-            if (product.getDiscount(this) > maxDiscountForProd){
-                maxDiscountForProd = product.getDiscount(this);
+            try{
+                if (product.getDiscount(this) > maxDiscountForProd){
+                    maxDiscountForProd = product.getDiscount(this);
+                }
             }
-            if (this.getCategoryDiscount() > maxDiscountForProd){
-                maxDiscountForProd = this.getCategoryDiscount();
+            catch (Exception e){
+                System.out.println(e + "1");
             }
-            if(Collections.max(this.getCoupons()) > maxDiscountForProd){
-                maxDiscountForProd = Collections.max(this.getCoupons());
-                flag = 1;
+            try {
+                if (this.getCategoryDiscount() > maxDiscountForProd){
+                    maxDiscountForProd = this.getCategoryDiscount();
+                }
+            }
+            catch (Exception e){
+                System.out.println(e + "2");
+            }
+            try{
+                if(Collections.max(this.getCoupons()) > maxDiscountForProd){
+                    maxDiscountForProd = Collections.max(this.getCoupons());
+                    flag = 1;
+                }
+            }
+            catch (Exception e){
             }
             int quantity = this.getCart().getProductQuantity(product);
-            int prodPrice = product.getPrice() - (product.getPrice() *( maxDiscountForProd / 100));
+            float prodPrice = product.getPrice() - (product.getPrice() *((float) maxDiscountForProd /(float) 100));
             System.out.println("product name: " + product.getName());
             System.out.println("product description: ");
             product.printAbstractData();
@@ -76,11 +92,11 @@ public class Elite extends Customer implements CustomerAtt {
         return totalBill;
     }
 
-    public void makePayment(int amount) {
+    public void makePayment(Float amount) {
         if (amount > this.getWalletBalance()){
             throw new RuntimeException("Insufficient balance");
         }
-        this.setWalletBalance(- amount);
+        this.setWalletBalance(-amount);
 
         if (amount > 5000){
             Random rand = new Random();

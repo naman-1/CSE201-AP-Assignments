@@ -2,7 +2,8 @@ import java.util.ArrayList;
 
 abstract class Customer implements CustomerAtt
 {
-    private int walletBalance, age, categoryDiscount;
+    private int age, categoryDiscount;
+    private float walletBalance;
     private String name, emailID, password, phoneNumber;
     private static ArrayList<Customer> allCustomers = new ArrayList<Customer>();
     Cart cart;
@@ -18,7 +19,7 @@ abstract class Customer implements CustomerAtt
         Customer.allCustomers.add(this);
     }
 
-    int getWalletBalance() 
+    float getWalletBalance() 
     {
         return this.walletBalance;
     }
@@ -55,7 +56,7 @@ abstract class Customer implements CustomerAtt
         return this.cart;
     }
     
-    void setWalletBalance(int walletBalance) 
+    void setWalletBalance(Float walletBalance) 
     {
         this.walletBalance += walletBalance;
     }

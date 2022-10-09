@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public interface CustomerAtt {
     ArrayList<Integer> getCoupons();
-    int generateBill();
-    void makePayment(int amount);
+    float generateBill();
+    void makePayment(Float amount);
     Customer updateStatus(String customerNewStatus);
 }
